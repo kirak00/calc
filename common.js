@@ -2,7 +2,16 @@
 function tabscritp(){
     const tabBtns = document.querySelectorAll('.mainTab button');
     const mainConts = document.querySelectorAll('.mainCont');
+    alert(1)
     tabBtns.forEach((btn, index) => {
+        if (btn.classList.contains('ALLtab')) {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach((btn) => btn.classList.remove('active'));
+                mainConts.forEach((cont) => cont.style.display = 'block');
+                btn.classList.add('active');
+            });
+            return;
+        }
         btn.addEventListener('click', () => {
             tabBtns.forEach((btn) => btn.classList.remove('active'));
             mainConts.forEach((cont) => cont.style.display = 'none');
