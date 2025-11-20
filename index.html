@@ -928,10 +928,7 @@ html,body {height: 100%;}
 /* 데이터 수정, 삭제 버튼 레이어     */
 .tableHeader {
     position: relative;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 40px;
 }   
 .dataControl {
     background: #ffffff;
@@ -945,25 +942,47 @@ html,body {height: 100%;}
     margin: 0;
     padding:0
 }
+.dataBtnList li {
+    width: 50%;
+    padding:10px 0
+}
 .dataBtnList li:last-child {
     margin-bottom: 0;
 }
 .dataBtnList button {
-    background: #0288d1;
+    background: #43b5f3;
     color: #fff;
     border: none;
     padding: 8px 16px;
     width: 100%;
     cursor: pointer;
     border-radius: 4px;
-    text-align: left;
+    text-align: center;
 }
 .dataBtnList button.deleteBtn {
-    background: #d32f2f;
+    background: #ea6161;
 }
-.dataBtnList button:hover {
-    background: #01579b;
+
+.btnSet {
+    margin-top: 10px;
+    display: flex;
+}   
+.btnSet .addBtn, .btnSet .editBtn {
+    width:50%;
+    background: #43b5f3;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: center;
+    margin-right: 10px;
 }
+.btnSet .editBtn {
+    background: #f4a261;
+}
+
+
 /* 데이터 수정, 삭제 버튼 레이어 끝 */
 
 </style>
