@@ -17,21 +17,27 @@ function tabscritp(){
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = today; 
     
-    /* 금액입력칸 엔터 치면 입력되게 */
+    /* 모바일에서 금액입력칸 엔터나 탭키 치면 입력되게 */
     const payedInput = document.getElementById('payed');
     payedInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            document.querySelector('.addBtn').click();
+        if (event.keyCode === 13 || event.keyCode === 9) { // Enter 키(13) 또는 Tab 키(9)
+            event.preventDefault(); // 기본 동작 방지
+            
+            const addBtn = document.querySelector('#formAdd');
+            addBtn.click();
+
         }
     });
+    
     totalAmount();
 
 }   
 /* 데이터 저장 로컬스코리지에    */
 function saveData(){
+    /*  */
+    
     /* 필수입력값 method date payed */
-    const addBtn = document.querySelector('.addBtn');
+    const addBtn = document.querySelector('#formAdd');
     addBtn.addEventListener('click', () => {
         const method = document.getElementById('method').value;
         const payed = document.getElementById('payed').value;
@@ -62,6 +68,7 @@ function saveData(){
             payed: payed,
             cate: cate,
             tag: tag,
+            id: 'id-' + Math.random().toString(36).substr(2, 9),
             date: date,
             method: method,
             content: content
@@ -71,6 +78,59 @@ function saveData(){
         localStorage.setItem('entries', JSON.stringify(entries));
         renderTable();
     });
+
+    const editBtn = document.querySelectorAll('.editBtn');
+    
+    editBtn.forEach(button => {
+        button.addEventListener('click', () => {
+            const id = document.querySelector('.form').getAttribute('data-id');
+            const method = document.getElementById('method').value;
+            const payed = document.getElementById('payed').value;
+            let cate = document.getElementById('cate').value;
+            let tag = document.getElementById('tag').value;
+            const date = document.getElementById('date').value;
+            const content = document.getElementById('content').value;
+            if (!content || !date || !payed) {
+                document.getElementById('errmentBox').textContent = '결제수단, 날짜, 금액은 필수 입력값입니다.';
+                return;
+            }
+            /* 태그 카테고리 값이 없으면 content 값으로 채우기 */
+            if (!tag) {
+                tag = content;
+            }
+            if (!cate) {
+                cate = content;
+            }
+            document.getElementById('errmentBox').textContent = '';
+            /* 태그, 카테고리는 , 구분자로 분리 */
+            tag = tag.split(',').map(item => item.trim());
+            cate = cate.split(',').map(item => item.trim());
+
+            let entries = JSON.parse(localStorage.getItem('entries')) || [];
+            const entryIndex = entries.findIndex(e => e.id === id);
+            if (entryIndex !== -1) {
+                entries[entryIndex] = {
+                    id: id,
+                    method: method,
+                    payed: payed,
+                    cate: cate,
+                    tag: tag,
+                    date: date,
+                    content: content
+                };
+                localStorage.setItem('entries', JSON.stringify(entries));
+                renderTable();
+            }
+            /* 수정후 추가버튼 보이게하고 수정버튼 숨기기 */
+            document.querySelector('#formAdd').style.display = 'inline-block';
+            document.querySelector('#formEdit').style.display = 'none';
+
+            
+            const dataControl = document.querySelector('.dataControl');
+            dataControl.style.display = 'none';
+        });
+    });
+
     /* 데이터 추가하고  초기화 */
     document.getElementById('payed').value = '';
     document.getElementById('cate').value = '';
@@ -93,6 +153,71 @@ function totalAmount(){
 
     recommendBox()
 }
+
+
+/* 테이블 tr 클릭하면 삭제,수정 할수있게 레이어팝업 띄어줌 */
+function tableRowClick(){
+    const tableBody = document.getElementById('dataList');
+    tableBody.addEventListener('click', (event) => {
+        const targetRow = event.target.closest('tr');
+        if (!targetRow) return; // 클릭한 곳이 tr이 아니면 무시
+        const rowIndex = Array.from(tableBody.children).indexOf(targetRow);
+        let entries = JSON.parse(localStorage.getItem('entries')) || [];
+        const entry = entries[rowIndex];
+        // 수정, 삭제 기능 구현 필요
+
+        /* 레이어 팝업  */
+        const dataControl = document.querySelector('.dataControl');
+        dataControl.style.display = 'block';
+
+        /* 클릭한 행에 강조 표시 추가 */
+        const allRows = tableBody.querySelectorAll('tr');
+        allRows.forEach(row => row.classList.remove('on'));
+        targetRow.classList.add('on');
+
+        /*  tr 클릭하면 수정 할수있게 셋팅   */
+        const form = document.querySelector('.form');
+        form.setAttribute('data-id', entry.id);
+        document.getElementById('method').value = entry.method;
+        document.getElementById('payed').value = entry.payed;
+        document.getElementById('cate').value = entry.cate;
+        document.getElementById('tag').value = entry.tag;
+        document.getElementById('date').value = entry.date;
+        document.getElementById('content').value = entry.content;
+        document.querySelector('#formEdit').style.display = 'inline-block';
+
+    });
+}
+
+function dataControlLayerPopUp(){
+
+
+    /* 삭제 버튼 클릭시 현재 아이디 찾아서 삭제  */
+    const deleteBtn = document.querySelector('#deleteBtn');
+    deleteBtn.addEventListener('click', () => {
+        
+        /* 클릭한 행의 데이터 가져오기 */
+        const tableBody = document.getElementById('dataList');
+        const activeRow = tableBody.querySelector('tr.on');
+        if (!activeRow) return;
+        const rowId = activeRow.getAttribute('data-id');
+        let entries = JSON.parse(localStorage.getItem('entries')) || [];
+        const entry = entries.find(e => e.id === rowId);
+        /* 아이디로 로컬스토리지에서 삭제 */
+        entries = entries.filter(e => e.id !== rowId);
+        localStorage.setItem('entries', JSON.stringify(entries));
+        
+        
+
+        renderTable();
+        dataControl.style.display = 'none';
+    });
+    
+}
+
+
+
+
 
 /* 표에 내용 뿌리기 */
 function renderTable(){
@@ -128,19 +253,31 @@ function renderTable(){
         const entryDate = new Date(entry.date);
         if (entryDate >= startDate && entryDate <= endDate) {
             const row = document.createElement('tr');
+            row.setAttribute('data-id', entry.id);
+            let tag = entry.tag;
+            if (Array.isArray(entry.tag)) {
+                tag = entry.tag.join(', ');
+            }
+            let cate = entry.cate;
+            if (Array.isArray(entry.cate)) {
+                cate = entry.cate.join(', ');
+            }
+
+            
             row.innerHTML = `
                 <td>${formatDateToMonthDay(entry.date)}</td>
                 <td>${entry.content}</td>
                 <td>${entry.method}</td>
-                <td>${entry.cate}</td>
+                <td>${cate}</td>
                 <td>${formatNumberWithCommas(entry.payed)}</td>
-                <td>${entry.tag}</td>
+                <td>${tag}</td>
             `;
             tableBody.appendChild(row);
         }
     });
     totalAmount();
     renderChart();
+    tableRowClick();
 }
 
 
@@ -372,10 +509,29 @@ function recommendBox(){
 
 
 
+loadData = function() {
+    let entries = JSON.parse(localStorage.getItem('entries')) || [];
+    /* 기존데이터에 아이디 컬럽 있는지 체크해서 없으면 아이디 부여, 랜덤 문자&숫자 */
+    let updated = false;
+    entries.forEach((entry, index) => {
+        if (!entry.id) {
+            entry.id = 'id-' + Math.random().toString(36).substr(2, 9);
+            updated = true;
+        }
+    });
+    if (updated) {
+        localStorage.setItem('entries', JSON.stringify(entries));
+    }
+    return entries;
+}
+
+
 
 /* 윈도우 로드이벤트 */
 
 $(window).on('load', function() {
+    loadData()
+
     tabscritp(); // 탭스크립트
     saveData(); //데이터저장
     renderTable(); //데이터표에 뿌리기
@@ -406,4 +562,8 @@ $(window).on('load', function() {
     sortPeriodTSelect.addEventListener('change', () => {
         renderWeeklyMonthlyChart();
     });
+
+    
+    dataControlLayerPopUp(); //데이터컨트롤 레이어팝업
+
 });

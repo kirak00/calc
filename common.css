@@ -80,6 +80,8 @@ html,body {height: 100%;}
 .selectBox select:hover {
     border-color: #0288d1;
 }
+
+.scrollbar   {position: relative;}
 .tableBox {
     overflow-x: auto;
 }
@@ -94,15 +96,12 @@ html,body {height: 100%;}
     border: 1px solid #ddd;
     text-align: left;
 }
+.tableBox tr.on{
+    background-color: #ffece6;
+}
 .tableBox th {
     background-color: #0288d1;
     color: #fff;
-}
-.tableBox tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-.tableBox tr:hover {
-    background-color: #f1f1f1;
 }
 .chartBox {
     margin-top: 20px;
@@ -198,5 +197,45 @@ html,body {height: 100%;}
     line-height: 20px;
     background: #1c80be;
     border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
+
+/* 데이터 수정, 삭제 버튼 레이어     */
+.tableHeader {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+}   
+.dataControl {
+    background: #ffffff;
+    border-radius: 4px;
+    z-index: 1000;
+}  
+.dataBtnList {
+    display: flex;
+    list-style: none;
+    gap:4px;
+    margin: 0;
+    padding:0
+}
+.dataBtnList li:last-child {
+    margin-bottom: 0;
+}
+.dataBtnList button {
+    background: #0288d1;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: left;
+}
+.dataBtnList button.deleteBtn {
+    background: #d32f2f;
+}
+.dataBtnList button:hover {
+    background: #01579b;
+}
+/* 데이터 수정, 삭제 버튼 레이어 끝 */

@@ -59,14 +59,15 @@
             </div>
             
             <div class="btnSet">
-                <button type="button" class="addBtn">추가</button>
+                <button type="button" id="formAdd"  class="addBtn">추가</button>
+                <button type="button" id="formEdit"  class="editBtn" style="display:none;" >수정</button>
                 <p id="errmentBox"></p>
             </div>
 
 
 
         </div>
-        <div class="mainCont" style="display:none">
+        <div class="mainCont" style="display:">
             <!-- 가계부 통계 틀  -->
             <!-- 주별 월별을 셀렉트박스로 고를수있게 하고 내용을 표로  보여주고 아래 차트로 보여줄꺼야 -->
                 <div class="selectBox">
@@ -85,7 +86,15 @@
                 <div class="tableBox">
                     <!-- 가계부 데이터 표로 뿌리기 -->
                      <!-- 총액 -->
-                    <div class="totalPayed">총액: <span id="totalAmount">0</span>원</div>
+                    <div class="tableHeader">
+                        <div class="totalPayed">총액: <span id="totalAmount">0</span>원</div>
+                        <div class="dataControl" style="display: none;">
+                            <ul class="dataBtnList">
+                                <li><button id="editBtn" class="editBtn">수정</button></li>
+                                <li><button id="deleteBtn" class="deleteBtn">삭제</button></li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="scrollbar">
                             <table>
                             <thead>
